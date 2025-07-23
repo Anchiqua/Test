@@ -1,41 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Circular Slider</title>
   <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .slider-container {
-  width: 90vw; /* 90% of viewport width */
-  max-width: 700px; /* max width on large screens */
-  margin: 0 auto;
-}
+      width: 90vw;
+      max-width: 700px;
+      margin: 0 auto;
+    }
   </style>
 </head>
+
 <body>
   <div id="slider-wrapper" class="slider-container"></div>
 
   <script src="slider.js"></script>
 
   <script>
-  const wrapper = document.getElementById("slider-wrapper");
-  const sliderCount = 5;
+    const wrapper = document.getElementById("slider-wrapper");
+    const sliderCount = 5;
 
-  for (let i = 0; i < sliderCount; i++) {
-    const size = wrapper.getBoundingClientRect().width;
-    const baseRadius = (size / 2) - 40;
-    const spacing = 40;
+    for (let i = 0; i < sliderCount; i++) {
+      const size = wrapper.getBoundingClientRect().width;
+      const baseRadius = (size / 2) - 40;
+      const spacing = 40;
 
-    const radius = baseRadius - i * spacing;
+      const radius = baseRadius - i * spacing;
 
-    new CircularSlider({
-      container: wrapper,
-      color: ["#5B3976", "#2B82D9", "#5EA831", "#F48C2B", "#E05246"][i],
-      min: [100, 50, 0, 0, 200][i],
-      max: [500, 1000, 1000, 800, 1000][i],
-      step: [50, 10, 5, 80, 10][i],
-      radius: radius
-    });
-  }
-</script>
+      new CircularSlider({
+        container: wrapper,
+        color: ["#5B3976", "#2B82D9", "#5EA831", "#F48C2B", "#E05246"][i],
+        min: [100, 50, 0, 0, 200][i],
+        max: [500, 1000, 1000, 800, 1000][i],
+        step: [50, 10, 5, 80, 10][i],
+        radius: radius
+      });
+    }
+  </script>
 </body>
+
 </html>
