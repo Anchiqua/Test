@@ -144,19 +144,19 @@ class CircularSlider {
     this.track.setAttribute("r", this.radius);
     this.track.setAttribute("fill", "none");
     this.track.setAttribute("stroke", `url(#${gradientId})`);
-    this.track.setAttribute("stroke-width", 14);
+    this.track.setAttribute("stroke-width", 20);
     this.track.setAttribute("filter", `url(#${filterId})`);
     this.group.appendChild(this.track);
 
     this.arc = document.createElementNS(svgNS, "path");
     this.arc.setAttribute("fill", "none");
     this.arc.setAttribute("stroke", this.color);
-    this.arc.setAttribute("stroke-width", 14);
+    this.arc.setAttribute("stroke-width", 20);
     this.arc.setAttribute("stroke-opacity", "0.7");
     this.group.appendChild(this.arc);
 
     this.handle = document.createElementNS(svgNS, "circle");
-    this.handle.setAttribute("r", 12);
+    this.handle.setAttribute("r", 16);
     this.handle.setAttribute("fill", this.color);
     this.handle.classList.add("handle");
     this.group.appendChild(this.handle);
