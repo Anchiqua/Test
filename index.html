@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Circular Slider</title>
+  <style>
+    .slider-container {
+  width: 90vw; /* 90% of viewport width */
+  max-width: 700px; /* max width on large screens */
+  margin: 0 auto;
+}
+  </style>
+</head>
+<body>
+  <div id="slider-wrapper" class="slider-container"></div>
+
+  <script src="slider.js"></script>
+  <script>
+    const wrapper = document.getElementById("slider-wrapper");
+
+    new CircularSlider({ container: wrapper, color: "#5B3976", min: 100, max: 500, step: 50, radius: 220 });
+    new CircularSlider({ container: wrapper, color: "#2B82D9", min: 50, max: 1000, step: 10, radius: 190 });
+    new CircularSlider({ container: wrapper, color: "#5EA831", min: 0, max: 1000, step: 5, radius: 160 });
+    new CircularSlider({ container: wrapper, color: "#F48C2B", min: 0, max: 800, step: 80, radius: 130 });
+    new CircularSlider({ container: wrapper, color: "#E05246", min: 200, max: 1000, step: 10, radius: 100 });
+  </script>
+</body>
+</html>
