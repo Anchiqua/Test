@@ -209,23 +209,42 @@ class CircularSlider {
   }
 
   updateArc(value) {
-    const startAngle = 0;
-    const endAngle = ((value - this.min) / (this.max - this.min)) * 360;
-    const r = this.radius;
-    const cx = this.center.x;
-    const cy = this.center.y;
+  const range = this.max - this.min;
+  const progress = (value - this.min) / range;
+  const r = this.radius;
+  const cx = this.center.x;
+  const cy = this.center.y;
 
-    const start = this.polarToCartesian(cx, cy, r, endAngle);
-    const end = this.polarToCartesian(cx, cy, r, startAngle);
-    const largeArc = endAngle - startAngle > 180 ? 1 : 0;
-
-    const arcPath = [
-      "M", end.x, end.y,
-      "A", r, r, 0, largeArc, 1, start.x, start.y
+  if (progress >= 1) {
+    // Special case: full circle using two 180° arcs
+    const d = [
+      "M", cx + r, cy,
+      "A", r, r, 0, 1, 1, cx - r, cy,
+      "A", r, r, 0, 1, 1, cx + r, cy
     ].join(" ");
-
-    this.arc.setAttribute("d", arcPath);
+    this.arc.setAttribute("d", d);
+    return;
   }
+
+  if (progress <= 0) {
+    this.arc.setAttribute("d", "");
+    return;
+  }
+
+  const startAngle = 0;
+  const endAngle = progress * 360;
+
+  const start = this.polarToCartesian(cx, cy, r, endAngle);
+  const end = this.polarToCartesian(cx, cy, r, startAngle);
+  const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+
+  const d = [
+    "M", end.x, end.y,
+    "A", r, r, 0, largeArc, 1, start.x, start.y
+  ].join(" ");
+
+  this.arc.setAttribute("d", d);
+}
 
   getAngleFromEvent(e) {
     const { clientX, clientY } = e.touches ? e.touches[0] : e;
