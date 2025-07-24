@@ -17,13 +17,14 @@ class CircularSlider {
     // Create or reuse shared SVG
     this.svg = this.getOrCreateSVG(this.container);
 
+    // Create or reuse value container
     this.valueContainer = this.getOrCreateValueContainer(this.container);
 
 
     // Create and add value display to value container
     this.valueDisplay = document.createElement('div');
     this.valueDisplay.style.fontFamily = 'Arial, sans-serif';
-    this.valueDisplay.style.fontSize = '2.5vw';
+    this.valueDisplay.style.fontSize = '1.6rem';
     this.valueDisplay.style.fontWeight = 'bold';
     this.valueDisplay.style.color = this.color;
     this.valueDisplay.style.marginBottom = '8px';
@@ -31,19 +32,17 @@ class CircularSlider {
     // Compute how many chars the max number needs
     const maxChars = options.max.toString().length;
 
-    const widthCh = maxChars + 1;
+    // Set width in 'ch' units based on maxChars + a bit of padding
+    const widthCh = maxChars + 1; // +1 for some breathing room
+
+    // When creating value display element, set its width:
     this.valueDisplay.style.width = `${widthCh}ch`;
-    this.valueDisplay.style.textAlign = 'right';
+    this.valueDisplay.style.textAlign = 'right'; // or center if you prefer
 
     this.valueDisplay.innerText = this.value;
     this.valueContainer.appendChild(this.valueDisplay);
 
     this.createSliderGroup();
-
-    const observer = new ResizeObserver(() => {
-  this.containerRect = this.container.getBoundingClientRect();
-});
-observer.observe(this.container);
   }
 
   getOrCreateValueContainer(container) {
@@ -63,16 +62,20 @@ observer.observe(this.container);
 
   getOrCreateSVG(container) {
     let svg = container.querySelector("svg");
-    const size = Math.min(this.containerRect.width, this.containerRect.height) || 300;
     if (!svg) {
       svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      const size = Math.min(this.containerRect.width, this.containerRect.height); // fallback to 320 if zero
 
+      // Use a square viewBox based on current container size
       svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
+
+      // Set width and height to 100% so it scales with container
       svg.setAttribute("width", "100%");
       svg.setAttribute("height", "100%");
 
       container.appendChild(svg);
     } else {
+      const size = Math.min(this.containerRect.width, this.containerRect.height);
       svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
     }
     return svg;
@@ -80,8 +83,7 @@ observer.observe(this.container);
 
   createSliderGroup() {
     const svgNS = "http://www.w3.org/2000/svg";
-    const containerRect = this.container.getBoundingClientRect();
-    const size = Math.min(containerRect.width, containerRect.height);
+    const size = Math.min(this.containerRect.width, this.containerRect.height);
     const cx = size / 2;
     const cy = size / 2;
     this.center = { x: cx, y: cy };
@@ -168,6 +170,7 @@ observer.observe(this.container);
   }
 
   startDrag(e) {
+    e.preventDefault();
     document.addEventListener("mousemove", this._boundOnDrag);
     document.addEventListener("mouseup", this._boundStopDrag);
     document.addEventListener("touchmove", this._boundOnDrag, { passive: false });
@@ -175,6 +178,7 @@ observer.observe(this.container);
   }
 
   onDrag(e) {
+    e.preventDefault();
     this.angle = this.getAngleFromEvent(e);
     this.value = this.angleToValue(this.angle);
     this.updateHandlePosition(this.value);
