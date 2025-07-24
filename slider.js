@@ -12,10 +12,11 @@ class CircularSlider {
     this._boundOnDrag = this.onDrag.bind(this);
     this._boundStopDrag = this.stopDrag.bind(this);
 
+    this.containerRect = this.container.getBoundingClientRect();
+
     // Create or reuse shared SVG
     this.svg = this.getOrCreateSVG(this.container);
 
-    // Create or reuse value container
     this.valueContainer = this.getOrCreateValueContainer(this.container);
 
 
@@ -30,17 +31,19 @@ class CircularSlider {
     // Compute how many chars the max number needs
     const maxChars = options.max.toString().length;
 
-    // Set width in 'ch' units based on maxChars + a bit of padding
-    const widthCh = maxChars + 1; // +1 for some breathing room
-
-    // When creating value display element, set its width:
+    const widthCh = maxChars + 1;
     this.valueDisplay.style.width = `${widthCh}ch`;
-    this.valueDisplay.style.textAlign = 'right'; // or center if you prefer
+    this.valueDisplay.style.textAlign = 'right';
 
     this.valueDisplay.innerText = this.value;
     this.valueContainer.appendChild(this.valueDisplay);
 
     this.createSliderGroup();
+
+    const observer = new ResizeObserver(() => {
+  this.containerRect = this.container.getBoundingClientRect();
+});
+observer.observe(this.container);
   }
 
   getOrCreateValueContainer(container) {
@@ -60,25 +63,16 @@ class CircularSlider {
 
   getOrCreateSVG(container) {
     let svg = container.querySelector("svg");
+    const size = Math.min(this.containerRect.width, this.containerRect.height) || 300;
     if (!svg) {
       svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-      // Set viewBox dynamically based on container size
-      const rect = container.getBoundingClientRect();
-      const size = Math.min(rect.width, rect.height) || 320; // fallback to 320 if zero
-
-      // Use a square viewBox based on current container size
       svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
-
-      // Set width and height to 100% so it scales with container
       svg.setAttribute("width", "100%");
       svg.setAttribute("height", "100%");
 
       container.appendChild(svg);
     } else {
-      // Update viewBox on resize or if container changes size
-      const rect = container.getBoundingClientRect();
-      const size = Math.min(rect.width, rect.height) || 320;
       svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
     }
     return svg;
@@ -174,7 +168,6 @@ class CircularSlider {
   }
 
   startDrag(e) {
-    e.preventDefault();
     document.addEventListener("mousemove", this._boundOnDrag);
     document.addEventListener("mouseup", this._boundStopDrag);
     document.addEventListener("touchmove", this._boundOnDrag, { passive: false });
@@ -182,7 +175,6 @@ class CircularSlider {
   }
 
   onDrag(e) {
-    e.preventDefault();
     this.angle = this.getAngleFromEvent(e);
     this.value = this.angleToValue(this.angle);
     this.updateHandlePosition(this.value);
@@ -233,9 +225,8 @@ class CircularSlider {
 
   getAngleFromEvent(e) {
     const { clientX, clientY } = e.touches ? e.touches[0] : e;
-    const rect = this.container.getBoundingClientRect();
-    const x = clientX - rect.left - this.center.x;
-    const y = clientY - rect.top - this.center.y;
+    const x = clientX - this.containerRect.left - this.center.x;
+    const y = clientY - this.containerRect.top - this.center.y;
     return Math.atan2(y, x);
   }
 
