@@ -4,40 +4,51 @@
   <meta charset="UTF-8" />
   <title>Circular Slider</title>
   <style>
+
+  .container {
+    height: 95vh;
+    /* width: 90vw; */
+  }
     .slider-container {
-  width: 90vw;
-  max-width: 700px;
-  height: 90vh;
-  margin: 0 auto;
+  width: 100%;
+  /* max-width: 700px; */
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
   </style>
 </head>
 <body>
-  <div id="slider-wrapper" class="slider-container"></div>
+  <div class="container">
 
-  <script src="slider.js"></script>
-
+    <div id="slider-wrapper" class="slider-container"></div>
+    
+    <script src="slider.js"></script>
+    
   <script>
-  const wrapper = document.getElementById("slider-wrapper");
-  const sliderCount = 5;
-
-  for (let i = 0; i < sliderCount; i++) {
-    const rect = wrapper.getBoundingClientRect();
-  const size = Math.min(rect.width, rect.height);
-    const baseRadius = (size / 2) - 40;
-    const spacing = 40;
-
-    const radius = baseRadius - i * spacing;
-
-    new CircularSlider({
-      container: wrapper,
-      color: ["#5B3976", "#2B82D9", "#5EA831", "#F48C2B", "#E05246"][i],
-      min: [100, 50, 0, 0, 200][i],
-      max: [500, 1000, 1000, 800, 1000][i],
-      step: [50, 10, 5, 80, 10][i],
-      radius: radius
-    });
-  }
-</script>
+    const wrapper = document.getElementById("slider-wrapper");
+    const sliderCount = 5;
+    
+    for (let i = 0; i < sliderCount; i++) {
+      const rect = wrapper.getBoundingClientRect();
+      const size = Math.min(rect.width, rect.height);
+      const baseRadius = (size / 2) - 40;
+      const spacing = 75;
+      
+      const radius = baseRadius - i * spacing;
+      
+      new CircularSlider({
+        container: wrapper,
+        color: ["#5B3976", "#2B82D9", "#5EA831", "#F48C2B", "#E05246"][i],
+        min: [100, 50, 0, 0, 200][i],
+        max: [500, 1000, 1000, 800, 1000][i],
+        step: [50, 10, 5, 80, 10][i],
+        radius: radius
+      });
+    }
+  </script>
+    </div>
 </body>
 </html>
