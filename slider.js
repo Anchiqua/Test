@@ -5,7 +5,7 @@ class CircularSlider {
     this.min = options.min || 0;
     this.max = options.max || 100;
     this.step = options.step || 1;
-    this.radius = options.radius || 100;
+    this.radius = options.radius;
     this.value = this.min;
     this.angle = -Math.PI / 2;
 
@@ -13,9 +13,10 @@ class CircularSlider {
     this._boundStopDrag = this.stopDrag.bind(this);
 
     this.containerRect = this.container.getBoundingClientRect();
-
+    
     // Create or reuse shared SVG
     this.svg = this.getOrCreateSVG(this.container);
+    this.svgRect = this.svg.getBoundingClientRect();
 
     // Create or reuse value container
     this.valueContainer = this.getOrCreateValueContainer(this.container);
@@ -24,10 +25,10 @@ class CircularSlider {
     // Create and add value display to value container
     this.valueDisplay = document.createElement('div');
     this.valueDisplay.style.fontFamily = 'Arial, sans-serif';
-    this.valueDisplay.style.fontSize = '1.6rem';
+    this.valueDisplay.style.fontSize = '3rem';
     this.valueDisplay.style.fontWeight = 'bold';
     this.valueDisplay.style.color = this.color;
-    this.valueDisplay.style.marginBottom = '8px';
+    this.valueDisplay.style.marginBottom = '5px';
 
     // Compute how many chars the max number needs
     const maxChars = options.max.toString().length;
@@ -37,7 +38,7 @@ class CircularSlider {
 
     // When creating value display element, set its width:
     this.valueDisplay.style.width = `${widthCh}ch`;
-    this.valueDisplay.style.textAlign = 'right'; // or center if you prefer
+    this.valueDisplay.style.textAlign = 'center'; // or center if you prefer
 
     this.valueDisplay.innerText = this.value;
     this.valueContainer.appendChild(this.valueDisplay);
@@ -53,9 +54,9 @@ class CircularSlider {
       valueDiv.style.display = "flex";
       valueDiv.style.flexWrap = "wrap";
       valueDiv.style.justifyContent = "center";
-      valueDiv.style.gap = "0.5rem";
+      valueDiv.style.gap = "2.5rem";
       valueDiv.style.marginTop = "0.5rem";
-      container.appendChild(valueDiv);  // Append after SVG instead of insertBefore
+      container.appendChild(valueDiv);
     }
     return valueDiv;
   }
@@ -71,7 +72,7 @@ class CircularSlider {
 
       // Set width and height to 100% so it scales with container
       svg.setAttribute("width", "100%");
-      svg.setAttribute("height", "100%");
+      // svg.setAttribute("height", "90vh");
 
       container.appendChild(svg);
     } else {
@@ -134,7 +135,7 @@ class CircularSlider {
 
     this.svg.appendChild(defs);
 
-    const strokeWidth = Math.max(6, Math.min(this.container.offsetWidth * 0.025, 20)); 
+    const strokeWidth = Math.max(6, Math.min(this.container.offsetWidth * 0.03, this.container.offsetHeight * 0.03, 25)); 
 
     this.track = document.createElementNS(svgNS, "circle");
     this.track.setAttribute("cx", cx);
@@ -154,7 +155,7 @@ class CircularSlider {
     this.group.appendChild(this.arc);
 
     this.handle = document.createElementNS(svgNS, "circle");
-    const handleSize = Math.max(8, Math.min(this.container.offsetWidth * 0.025, 24)); 
+    const handleSize = Math.max(8, Math.min(this.container.offsetWidth * 0.03, this.container.offsetHeight * 0.03, 30)); 
     this.handle.setAttribute("r", handleSize);
     this.handle.setAttribute("fill", this.color);
     this.handle.classList.add("handle");
@@ -247,11 +248,17 @@ class CircularSlider {
 }
 
   getAngleFromEvent(e) {
-    const { clientX, clientY } = e.touches ? e.touches[0] : e;
-    const x = clientX - this.containerRect.left - this.center.x;
-    const y = clientY - this.containerRect.top - this.center.y;
-    return Math.atan2(y, x);
-  }
+  const pt = this.svg.createSVGPoint();
+  pt.x = e.touches ? e.touches[0].clientX : e.clientX;
+  pt.y = e.touches ? e.touches[0].clientY : e.clientY;
+
+  const svgP = pt.matrixTransform(this.svg.getScreenCTM().inverse());
+
+  const dx = svgP.x - this.center.x;
+  const dy = svgP.y - this.center.y;
+
+  return Math.atan2(dy, dx);
+}
 
   angleToValue(angle) {
     const degrees = (angle * 180) / Math.PI;
@@ -269,3 +276,5 @@ class CircularSlider {
     };
   }
 }
+
+
